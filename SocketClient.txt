@@ -1,0 +1,52 @@
+#include <wiringPi.h>
+#include <softPwm.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <termios.h>
+
+int main(void)
+{
+        struct sockaddr_in serveraddr;
+        int fd;
+        char buf[1024] = "\0";
+        int data;
+        int returnStatus = 0;
+        int Flag = 1;
+        int key;
+
+        fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (fd < 0)
+        {
+                fprintf(stderr, "Socket Creation Failed.\n");
+                return 1;
+        }
+        else
+        {
+                fprintf(stderr, "Socket Created\n");
+        }
+        memset(&serveraddr, 0, sizeof(serveraddr));
+        serveraddr.sin_family = AF_INET;
+        serveraddr.sin_addr.s_addr = inet_addr("your IP address");
+        serveraddr.sin_port = htons(12000);
+        returnStatus = connect(fd, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+        if(returnStatus<0)
+        {
+             fprintf(stderr, "Connection Error\n");
+             close(fd);
+             exit(1);
+        }
+        else
+        {
+             fprintf(stderr, "Connection Successful\n");
+             returnStatus = 0;
+        }
+
+        memset(buf, 0, sizeof(buf));
+        return 0;
+}
